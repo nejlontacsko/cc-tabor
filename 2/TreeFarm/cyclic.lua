@@ -1,3 +1,5 @@
+local sender = require "/TreeFarm/sender"
+
 function turnToLargeChest()
     --Where is the chest?
     local face = ""
@@ -32,7 +34,8 @@ function listChestContent()
     local slotOccupiedInChest = 0
 
     for slot, item in pairs(front.list()) do
-        print(("%d x %s in slot %d"):format(item.count, item.name, slot))
+        --print(("%d x %s in slot %d"):format(item.count, item.name, slot))
+        sender.tellInventory(item.name, item.count)
         slotOccupiedInChest = slotOccupiedInChest + 1
         if item.name == "minecraft:charcoal" then
             coalAvailable = coalAvailable + item.count
@@ -118,6 +121,9 @@ function goForward()
 end
 
 --MAIN
+
+local axe = peripheral.wrap("right")
+print(peripheral.getNames(axe))
 
 --setup
 turnToLargeChest()
