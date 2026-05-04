@@ -1,38 +1,52 @@
-local function indexOf(list, x)
-    for i, v in ipairs(list) do
-        if v == x then
+local function indexOf(startPosList, lenList, x)
+    for i, v in ipairs(startPosList) do
+        local len = lenList[i]
+        if x >= v and x <= (v + len - 1) then
             return i
         end
     end
     return 0
 end
 
-term.clear()
+local function resetScreen()
+    term.clear()
+    term.setCursorPos(1, 1)
+    term.setTextColor(colors.white)
+end
 
-print("Milyen a táborunk?")
-print()
+local likertOptions = { "Szornyu", "Gyenge", "Semleges", "Jo", "Kiraly!" }
+local likertColors = { colors.red, colors.orange, colors.yellow, colors.lime, colors.green}
 
-term.setTextColor(colors.red)
-term.write("   [Szörnyü]")
-term.setTextColor(colors.orange)
-term.write(" [Gyenge]")
-term.setTextColor(colors.yellow)
-term.write(" [Semleges]")
-term.setTextColor(colors.lime)
-term.write(" [Jó]")
-term.setTextColor(colors.green)
-term.write(" [Király!]")
-term.setTextColor(colors.lightBlue)
+resetScreen()
+print(("%d. kerdes: Milyen a taborunk?"):format(1))
 print()
-print()
+term.write("  ")
+
+local startPosList = {}
+local lenList = {}
+local currentX = 4
+for i = 1, #likertOptions do
+    local label = (" [%s]"):format(likertOptions[i])
+    startPosList[i] = currentX
+    lenList[i] = #label
+
+    term.setTextColor(likertColors[i])
+    term.write(label)
+
+    currentX = currentX + #label
+end
+
+local activeLine = 3 -- Hosszabb kerdesekre ki kell majd szÃ¡molni hova kerÃ¼l a kÃ©pernyÅ‘n
+
 selected = 0
-
 while selected == 0 do
     local event, button, x, y = os.pullEvent("mouse_click")
-    if y == 3 then
-        selected = indexOf({4, 14, 23, 34, 39}, x)
+    if y == activeLine then
+        selected = indexOf(startPosList, lenList, x)
         if selected > 0 then
-            print(("Kattintott választás: %d"):format(selected))
+            resetScreen()
+            term.setTextColor(colors.lightBlue)
+            print(("Kattintott valasz: %d"):format(selected))
         end
     end
 end
